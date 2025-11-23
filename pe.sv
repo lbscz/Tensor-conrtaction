@@ -264,7 +264,10 @@ module pe #(
         .ADD_LATENCY(ADD_LATENCY)
     ) u_bc_tree (
         .clk              (clk),
-        .rst_n            (rst_n || Clear_acc),
+        // Clear_acc should actively reset the reduction tree; combine with the
+        // active-low reset to make sure any in-flight state is cleared when a
+        // new accumulation starts.
+        .rst_n            (rst_n && !Clear_acc),
         .prod_in          (mul_result),
         .prod_valid_in    (valid_mul_out && mode_mul_out == 2'b01),
         .bc_acc_in        (bc_acc_reg),
